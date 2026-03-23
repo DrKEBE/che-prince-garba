@@ -1,0 +1,99 @@
+/* Stock-specific styles */
+.stock-gradient-bg {
+  background: linear-gradient(135deg, rgba(138, 43, 226, 0.1) 0%, rgba(255, 64, 129, 0.1) 100%);
+}
+
+.stock-card-hover {
+  transition: all 0.3s ease;
+}
+
+.stock-card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+.stock-status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.stock-status-critical {
+  background-color: #EF4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
+.stock-status-warning {
+  background-color: #F59E0B;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+}
+
+.stock-status-good {
+  background-color: #10B981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+.stock-chart-tooltip {
+  background: white;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Animation pour les alertes de stock */
+@keyframes pulse-alert {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.stock-alert-pulse {
+  animation: pulse-alert 2s infinite;
+}
+
+/* Styles pour les niveaux de stock */
+.stock-level-bar {
+  transition: width 0.3s ease;
+}
+
+.stock-level-low {
+  background: linear-gradient(90deg, #F59E0B 0%, #FBBF24 100%);
+}
+
+.stock-level-critical {
+  background: linear-gradient(90deg, #EF4444 0%, #F87171 100%);
+}
+
+.stock-level-good {
+  background: linear-gradient(90deg, #10B981 0%, #34D399 100%);
+}
+
+/* Glass effect pour les cartes de stock */
+.stock-glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Animation pour le chargement du stock */
+@keyframes stock-loading {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.stock-loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: stock-loading 1.5s infinite;
+}

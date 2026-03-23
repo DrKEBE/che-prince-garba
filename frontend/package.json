@@ -1,0 +1,52 @@
+{
+  "name": "luxe-beaute-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^5.18.0",
+    "@mui/material": "^5.18.0",
+    "@mui/x-data-grid": "^8.27.3",
+    "@mui/x-date-pickers": "^6.20.2",
+    "@tanstack/react-table": "^8.21.3",
+    "axios": "^1.4.0",
+    "chart.js": "^4.3.0",
+    "date-fns": "^2.30.0",
+    "file-saver": "^2.0.5",
+    "formik": "^2.4.9",
+    "framer-motion": "^10.18.0",
+    "jspdf": "^4.2.0",
+    "jspdf-autotable": "^5.0.7",
+    "lodash": "^4.17.23",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.6.0",
+    "react-loading-skeleton": "^3.3.0",
+    "react-query": "^3.39.3",
+    "react-router-dom": "^6.14.0",
+    "react-sparkline": "^2.0.0",
+    "recharts": "^2.15.4",
+    "uuid": "^13.0.0",
+    "xlsx": "^0.18.5",
+    "yup": "^1.7.1"
+  },
+  "devDependencies": {
+    "@types/file-saver": "^2.0.7",
+    "@vitejs/plugin-react": "^5.1.2",
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "vite": "^5.4.21"
+  },
+  "scripts": {
+    "dev": "cross-env VITE_DEV_MODE=true vite",
+    "dev:mock": "cross-env VITE_DEV_MODE=true VITE_API_URL=http://localhost:8000 vite",
+    "dev:no-auth": "cross-env VITE_DEV_MODE=true VITE_BYPASS_AUTH=true vite",
+    "build:dev": "cross-env VITE_DEV_MODE=true vite build",
+    "build:prod": "cross-env VITE_DEV_MODE=false vite build",
+    "preview": "vite preview",
+    "dev:backend": "cd ../backend && python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000",
+    "dev:full": "concurrently \"npm run dev\" \"npm run dev:backend\""
+  }
+}

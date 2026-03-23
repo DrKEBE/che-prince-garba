@@ -1,0 +1,446 @@
+/* src/styles/animations.css */
+
+/* ============================================
+   ANIMATIONS DE BASE ET TRANSITIONS GLOBALES
+   ============================================ */
+
+/* Animation d'entrée douce pour les pages */
+@keyframes pageEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation de sortie */
+@keyframes pageExit {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+/* Animation de pulse subtile pour les indicateurs */
+@keyframes gentlePulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Animation de rebond léger */
+@keyframes softBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Animation de rotation infinie pour les loaders */
+@keyframes infiniteRotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animation de vague pour les éléments en attente */
+@keyframes shimmerWave {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ============================================
+   ANIMATIONS SPÉCIFIQUES AUX COMPOSANTS
+   ============================================ */
+
+/* Animation pour les cartes de statistiques */
+@keyframes cardFloat {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transform: translateY(0);
+  }
+  50% {
+    box-shadow: 0 8px 30px rgba(138, 43, 226, 0.15);
+    transform: translateY(-2px);
+  }
+}
+
+/* Animation pour les badges de notification */
+@keyframes notificationPing {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Animation pour les indicateurs de chargement */
+@keyframes loadingDots {
+  0%, 80%, 100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+/* Animation pour les barres de progression */
+@keyframes progressFill {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: var(--progress-value);
+  }
+}
+
+/* Animation pour les graphiques */
+@keyframes chartGrow {
+  0% {
+    transform: scaleY(0);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+/* ============================================
+   ANIMATIONS D'INTERACTION UTILISATEUR
+   ============================================ */
+
+/* Effet de press sur les boutons */
+@keyframes buttonPress {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Animation de shake pour les erreurs */
+@keyframes shakeError {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-5px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(5px);
+  }
+}
+
+/* Animation de rebond pour les succès */
+@keyframes bounceSuccess {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-10px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  75% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Animation de fade in pour les modals */
+@keyframes modalFadeIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Animation de slide pour les panneaux latéraux */
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutRight {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ============================================
+   ANIMATIONS SPÉCIALES COSMÉTIQUES
+   ============================================ */
+
+/* Animation de scintillement (pour les éléments premium) */
+@keyframes sparkleEffect {
+  0%, 100% {
+    opacity: 0.8;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.3);
+  }
+}
+
+/* Animation de gradient fluide pour les éléments cosmétiques */
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Animation de fade in séquentiel pour les listes */
+@keyframes staggeredFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   CLASSES UTILITAIRES D'ANIMATION
+   ============================================ */
+
+/* Classes d'entrée */
+.animate-in {
+  animation: pageEnter 0.5s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Classes de sortie */
+.animate-out {
+  animation: pageExit 0.3s ease-out;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.3s ease-out;
+}
+
+/* Animations d'interaction */
+.animate-press {
+  animation: buttonPress 0.2s ease;
+}
+
+.animate-bounce {
+  animation: softBounce 2s infinite;
+}
+
+.animate-pulse {
+  animation: gentlePulse 2s infinite;
+}
+
+.animate-shake {
+  animation: shakeError 0.5s ease;
+}
+
+/* Animations spéciales */
+.animate-float {
+  animation: cardFloat 3s ease-in-out infinite;
+}
+
+.animate-sparkle {
+  animation: sparkleEffect 2s ease-in-out infinite;
+}
+
+.animate-gradient {
+  background: linear-gradient(-45deg, #8A2BE2, #FF4081, #9D4EDD, #FF79B0);
+  background-size: 400% 400%;
+  animation: gradientFlow 10s ease infinite;
+}
+
+/* Animation pour les notifications */
+.animate-notification-ping::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: currentColor;
+  animation: notificationPing 1.5s ease-out infinite;
+}
+
+/* Animation pour les indicateurs de chargement */
+.animate-loading-dots::after {
+  content: '...';
+  animation: loadingDots 1.5s infinite;
+}
+
+/* Animation pour les barres de chargement */
+.animate-progress {
+  animation: progressFill 2s ease-out forwards;
+}
+
+/* Animation pour les entrées en séquence */
+.animate-staggered > * {
+  opacity: 0;
+  animation: staggeredFadeIn 0.5s ease-out forwards;
+}
+
+.animate-staggered > *:nth-child(1) { animation-delay: 0.1s; }
+.animate-staggered > *:nth-child(2) { animation-delay: 0.2s; }
+.animate-staggered > *:nth-child(3) { animation-delay: 0.3s; }
+.animate-staggered > *:nth-child(4) { animation-delay: 0.4s; }
+.animate-staggered > *:nth-child(5) { animation-delay: 0.5s; }
+
+/* ============================================
+   TRANSITIONS SPÉCIFIQUES AUX COMPOSANTS
+   ============================================ */
+
+/* Transition pour les cartes de produits */
+.product-card-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-card-transition:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(138, 43, 226, 0.15);
+}
+
+/* Transition pour les boutons cosmétiques */
+.cosmetic-button {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.cosmetic-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.cosmetic-button:hover::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Transition pour les inputs */
+.input-transition {
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.input-transition:focus {
+  border-color: #8A2BE2;
+  box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
+}
+
+/* Transition pour les onglets */
+.tab-transition {
+  transition: all 0.3s ease;
+}
+
+.tab-transition:hover {
+  transform: translateY(-2px);
+}
+
+/* ============================================
+   MÉDIAS QUERIES POUR LES ANIMATIONS
+   ============================================ */
+
+/* Désactiver les animations pour les préférences de réduction de mouvement */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Optimisations pour mobile */
+@media (max-width: 768px) {
+  .product-card-transition:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+}
+
+/* ============================================
+   VARIABLES CSS POUR LES ANIMATIONS
+   ============================================ */
+
+:root {
+  --animation-duration-fast: 0.2s;
+  --animation-duration-normal: 0.3s;
+  --animation-duration-slow: 0.5s;
+  --animation-easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --animation-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --animation-easing-smooth: cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/* Classes utilitaires pour les durées d'animation */
+.animate-fast {
+  animation-duration: var(--animation-duration-fast);
+}
+
+.animate-normal {
+  animation-duration: var(--animation-duration-normal);
+}
+
+.animate-slow {
+  animation-duration: var(--animation-duration-slow);
+}
