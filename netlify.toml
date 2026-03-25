@@ -1,6 +1,6 @@
 [build]
   base = "frontend"
-  command = "npm run build:prod"
+  command = "npm ci && npm run build:prod"
   publish = "dist"
 
 [build.environment]
