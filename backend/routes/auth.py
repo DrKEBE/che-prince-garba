@@ -13,7 +13,7 @@ from models import User
 from schemas import UserCreate, UserResponse, Token, UserLogin
 from core.config import settings
 
-router = APIRouter(prefix="/auth", tags=["Authentification"])
+router = APIRouter(tags=["Authentification"])
 
 # Configuration
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
