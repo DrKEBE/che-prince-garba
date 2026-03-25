@@ -2,6 +2,8 @@
 import sys
 from pathlib import Path
 
+from sqlalchemy import text
+
 # Assurer que le dossier courant est dans le PYTHONPATH
 current_dir = Path(__file__).parent
 sys.path.insert(0, str(current_dir))
@@ -71,8 +73,8 @@ app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
     description="Système complet de gestion pour institut de beauté luxe",
-    docs_url="/docs" if settings.DEBUG else None,
-    redoc_url="/redoc" if settings.DEBUG else None,
+    docs_url="/docs",
+    redoc_url="/redoc",
     lifespan=lifespan
 )
 
@@ -139,7 +141,7 @@ async def health_check(db: Session = Depends(get_db)):
     """Vérification de la santé de l'application"""
     try:
         # Test de la connexion à la base de données
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         
         # Vérification de l'espace disque
         import shutil
