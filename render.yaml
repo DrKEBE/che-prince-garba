@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: che-prince-garba-backend
+    runtime: docker
+    repo: https://github.com/DrKEBE/che-prince-garba
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: che-prince-garba
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ENVIRONMENT
+        value: production
+      - key: DEV_MODE
+        value: false
+      - key: DEBUG
+        value: false
+      - key: BACKEND_CORS_ORIGINS
+        value: '["https://che-prince-garba.netlify.app"]'
+      - key: ALLOWED_HOSTS
+        value: '["*"]'
+
+databases:
+  - name: che-prince-garba
+    plan: free

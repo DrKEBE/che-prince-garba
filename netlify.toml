@@ -1,9 +1,11 @@
 [build]
-  base = "frontend"
-  command = "npm run build:prod"
-  publish = "dist"
+  command = "cd frontend && npm run build:prod"
+  publish = "frontend/dist"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+[build.environment]
+  # Ces variables seront utilisées lors du build
+  VITE_DEV_MODE = "false"
+
+[context.production.environment]
+  # Surcharge possible pour la prod (la variable VITE_API_URL sera définie dans Netlify UI)
+  VITE_API_URL = "https://che-prince-garba.onrender.com"
