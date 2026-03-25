@@ -44,7 +44,7 @@
     "dev:mock": "cross-env VITE_DEV_MODE=true VITE_API_URL=http://localhost:8000 vite",
     "dev:no-auth": "cross-env VITE_DEV_MODE=true VITE_BYPASS_AUTH=true vite",
     "build:dev": "cross-env VITE_DEV_MODE=true vite build",
-    "build:prod": "cross-env VITE_DEV_MODE=false vite build",
+    "build:prod": "vite build",
     "preview": "vite preview",
     "dev:backend": "cd ../backend && python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000",
     "dev:full": "concurrently \"npm run dev\" \"npm run dev:backend\""
