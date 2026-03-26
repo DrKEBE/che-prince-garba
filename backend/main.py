@@ -44,8 +44,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('app.log'),
-        logging.StreamHandler()
+        logging.StreamHandler()  # seulement la console
     ]
 )
 logger = logging.getLogger(__name__)
@@ -77,6 +76,7 @@ app = FastAPI(
     redoc_url="/redoc",
     lifespan=lifespan
 )
+os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
 
 if settings.DEV_MODE:
     # Middleware de dev
