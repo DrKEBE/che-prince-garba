@@ -1,9 +1,9 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import authService from '../services/auth'; // 👈 importer le service d’auth
+import authService from '../services/auth';
 
 const DEV_MODE = import.meta.env.VITE_DEV_MODE === 'true';
 
-const AuthContext = createContext({});
+export const AuthContext = createContext({});   // ← ajout de 'export'
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
