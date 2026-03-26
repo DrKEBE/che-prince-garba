@@ -1,5 +1,5 @@
-// frontend/src/context/AuthContext.jsx - VERSION CORRIGÉE
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import authService from '../services/auth'; // 👈 importer le service d’auth
 
 const DEV_MODE = import.meta.env.VITE_DEV_MODE === 'true';
 
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
 
   // Vérifier l'authentification au démarrage
   useEffect(() => {
-    const token = localStorage.getItem('auth_token'); // Note: 'auth_token' pas 'token'
+    const token = localStorage.getItem('auth_token');
     const storedUser = localStorage.getItem('user');
     
     console.log('Initial auth check:', { token, storedUser });
@@ -79,18 +79,28 @@ export const AuthProvider = ({ children }) => {
     
     // ===== MODE PRODUCTION =====
     try {
-      // TODO: Implémenter l'appel API réel
-      console.log('Production login - TODO: implement API call');
-      return { success: false, error: 'API non implémentée' };
+      // Utiliser le service auth.js
+      const result = await authService.login(username, password);
+      
+      if (result.success) {
+        // authService a déjà stocké le token et l'utilisateur dans localStorage
+        const storedUser = authService.getStoredUser();
+        setUser(storedUser);
+        return { success: true, user: storedUser };
+      } else {
+        setError(result.error);
+        return { success: false, error: result.error };
+      }
     } catch (err) {
-      setError(err.message);
-      return { success: false, error: err.message };
+      console.error('Login error:', err);
+      const errorMsg = err.response?.data?.detail || err.message || 'Erreur de connexion';
+      setError(errorMsg);
+      return { success: false, error: errorMsg };
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user');
+    authService.logout(); // cela efface tout et redirige vers /login
     setUser(null);
     setError(null);
   };
@@ -123,7 +133,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
-
-
-export { AuthContext };
