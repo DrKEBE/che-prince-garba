@@ -50,14 +50,13 @@ const Sidebar = () => {
 
   // Définition des éléments de navigation selon le rôle
   const navItems = [
-    { text: 'Tableau de bord', path: '/dashboard', icon: <DashboardIcon />, roles: ['admin', 'manager', 'user'] },
-    { text: 'Ventes', path: '/sales', icon: <ShoppingCartIcon />, roles: ['admin', 'manager', 'user'] },
-    { text: 'Clients', path: '/clients', icon: <PeopleIcon />, roles: ['admin', 'manager', 'user'] },
-    { text: 'Produits', path: '/products', icon: <InventoryIcon />, roles: ['admin', 'manager'] },
-    { text: 'Comptabilité', path: '/accounting', icon: <AccountBalanceIcon />, roles: ['admin'] },
-    { text: 'Paramètres', path: '/settings', icon: <SettingsIcon />, roles: ['admin'] },
+    { text: 'Tableau de bord', path: '/dashboard', icon: <DashboardIcon />, roles: ['ADMIN', 'MANAGER', 'CASHIER'] },
+    { text: 'Ventes', path: '/sales', icon: <ShoppingCartIcon />, roles: ['ADMIN', 'MANAGER', 'CASHIER'] },
+    { text: 'Clients', path: '/clients', icon: <PeopleIcon />, roles: ['ADMIN', 'MANAGER', 'CASHIER'] },
+    { text: 'Produits', path: '/products', icon: <InventoryIcon />, roles: ['ADMIN', 'MANAGER'] },
+    { text: 'Comptabilité', path: '/accounting', icon: <AccountBalanceIcon />, roles: ['ADMIN'] },
+    { text: 'Paramètres', path: '/settings', icon: <SettingsIcon />, roles: ['ADMIN'] },
   ];
-
   // Filtrer selon le rôle de l'utilisateur
   const filteredItems = navItems.filter(item =>
     item.roles.includes(user?.role || 'user')

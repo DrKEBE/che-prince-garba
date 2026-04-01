@@ -40,6 +40,7 @@
     "vite": "^5.4.21"
   },
   "scripts": {
+    "prod":"cross-env VITE_DEV_MODE=fals vite",
     "dev": "cross-env VITE_DEV_MODE=true vite",
     "dev:mock": "cross-env VITE_DEV_MODE=true VITE_API_URL=http://localhost:8000 vite",
     "dev:no-auth": "cross-env VITE_DEV_MODE=true VITE_BYPASS_AUTH=true vite",

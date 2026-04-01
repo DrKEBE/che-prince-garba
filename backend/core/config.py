@@ -4,8 +4,8 @@ from typing import List, Optional
 
 class Settings(BaseSettings):
     # ===== Environnement =====
-    ENVIRONMENT: str = "development"
-    DEV_MODE: bool = False
+    ENVIRONMENT: str = "production"  # production, development, testing
+    DEV_MODE: bool = True
     DEBUG: bool = True
     
     # ===== Database =====
@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     
     # ===== CORS =====
     BACKEND_CORS_ORIGINS: List[str] = [
+        "https://che-prince-garba.netlify.app",
         "http://localhost:3000",
         "http://127.0.0.1:3000",  # Ajouter cette alternative
         "http://localhost:5173",   # Vite par défaut

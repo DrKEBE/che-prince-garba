@@ -19,7 +19,7 @@ router = APIRouter(prefix="/sales", tags=["Ventes"])
 # ROUTES DE VENTES
 # =========================
 
-@router.post("/", response_model=Dict[str, Any], status_code=201)
+@router.post("", response_model=Dict[str, Any], status_code=201)
 def create_sale(
     sale_data: schemas.SaleCreate,
     db: Session = Depends(get_db),
@@ -38,7 +38,7 @@ def create_sale(
         raise HTTPException(status_code=500, detail=f"Erreur: {str(e)}")
 
 
-@router.get("/", response_model=List[Dict[str, Any]])
+@router.get("", response_model=List[Dict[str, Any]])
 def get_sales(
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=200),

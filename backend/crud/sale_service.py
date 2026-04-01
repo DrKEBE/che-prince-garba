@@ -52,160 +52,161 @@ class SaleRefundService:
             raise BusinessLogicException("La vente doit contenir au moins un produit")
         
         try:
-            # Démarrer une transaction
-            with db.begin():
-                # Récupérer et verrouiller les produits
-                product_ids = [item.product_id for item in sale_data.items]
-                products = db.query(Product).filter(
-                    Product.id.in_(product_ids)
-                ).with_for_update().all()
-                
-                if len(products) != len(product_ids):
-                    found_ids = [p.id for p in products]
-                    missing = set(product_ids) - set(found_ids)
-                    raise NotFoundException("Produit", list(missing)[0])
-                
-                products_map = {p.id: p for p in products}
-                
-                # Validation et calculs - utiliser des entiers
-                items_data = []
-                total_amount = 0
-                total_cost = 0
-                total_profit = 0
-                total_tax = sale_data.tax_amount or 0
-                total_shipping = sale_data.shipping_cost or 0
-                
-                for item in sale_data.items:
-                    product = products_map[item.product_id]
-                    
-                    # Vérifier le stock
-                    current_stock = product_crud.calculate_current_stock(db, product.id)
-                    if current_stock < item.quantity:
-                        raise InsufficientStockException(
-                            product.name, current_stock, item.quantity
-                        )
-                    
-                    # Convertir les Decimal en int
-                    unit_price = int(item.unit_price) if item.unit_price is not None else int(product.selling_price)
-                    purchase_price = int(product.purchase_price)
-                    line_discount = item.discount or 0
-                    
-                    # Calculs de la ligne en entiers
-                    line_total = (unit_price * item.quantity) - line_discount
-                    line_cost = purchase_price * item.quantity
-                    line_profit = line_total - line_cost - line_discount
-                    
-                    items_data.append({
-                        "product": product,
-                        "quantity": item.quantity,
-                        "unit_price": unit_price,
-                        "purchase_price": purchase_price,
-                        "line_discount": line_discount,
-                        "line_total": line_total,
-                        "line_cost": line_cost,
-                        "line_profit": line_profit
-                    })
-                    
-                    total_amount += line_total
-                    total_cost += line_cost
-                    total_profit += line_profit
-                
-                # Appliquer la remise globale
-                discount = sale_data.discount or 0
-                if discount > total_amount:
-                    raise BusinessLogicException("La remise ne peut pas dépasser le montant total")
-                
-                final_amount = total_amount - discount + total_tax + total_shipping
-                
-                # Vérifier le client
-                client = None
-                if sale_data.client_id:
-                    client = db.query(Client).filter(Client.id == sale_data.client_id).first()
-                    if not client:
-                        raise NotFoundException("Client", sale_data.client_id)
-                
-                # Créer la vente - tous les champs en entiers
-                invoice_number = SaleRefundService.generate_invoice_number()
-                db_sale = Sale(
-                    client_id=sale_data.client_id,
-                    invoice_number=invoice_number,
-                    total_amount=total_amount,
-                    discount=discount,
-                    tax_amount=total_tax,
-                    shipping_cost=total_shipping,
-                    final_amount=final_amount,
-                    payment_method=sale_data.payment_method,
-                    payment_status="PAID",
-                    total_profit=total_profit,
-                    total_cost=total_cost,
-                    notes=sale_data.notes,
-                    sale_date=datetime.utcnow(),
-                    cashier_id=user_id
-                )
-                
-                db.add(db_sale)
-                db.flush()
-                
-                # Créer les lignes de vente
-                for item_data in items_data:
-                    sale_item = SaleItem(
-                        sale_id=db_sale.id,
-                        product_id=item_data["product"].id,
-                        quantity=item_data["quantity"],
-                        unit_price=item_data["unit_price"],
-                        purchase_price=item_data["purchase_price"],
-                        discount=item_data["line_discount"],
-                        total_price=item_data["line_total"],
-                        cost=item_data["line_cost"],
-                        profit=item_data["line_profit"]
-                    )
-                    db.add(sale_item)
-                    
-                    # Mouvement de stock
-                    movement = StockMovement(
-                        product_id=item_data["product"].id,
-                        movement_type="OUT",
-                        quantity=item_data["quantity"],
-                        unit_cost=item_data["purchase_price"],
-                        total_cost=item_data["line_cost"],
-                        reason="VENTE",
-                        reference=invoice_number,
-                        movement_date=datetime.utcnow()
-                    )
-                    db.add(movement)
-                
-                # Mettre à jour le client
-                if client:
-                    # Convertir le Decimal en int
-                    client_total = int(client.total_purchases) if client.total_purchases else 0
-                    client.total_purchases = client_total + final_amount
-                    client.last_purchase = datetime.utcnow()
-                    
-                    # Points de fidélité (1 point par 1000 FCFA)
-                    points_to_add = final_amount // 1000
-                    client.loyalty_points = (client.loyalty_points or 0) + points_to_add
-                    
-                    # Mise à jour du type de client
-                    if client.total_purchases > 1000000:
-                        client.client_type = "VIP"
-                    elif client.total_purchases > 500000:
-                        client.client_type = "FIDELITE"
-                
-                # Créer le paiement
-                payment = Payment(
-                    sale_id=db_sale.id,
-                    amount=final_amount,
-                    payment_method=sale_data.payment_method,
-                    payment_date=datetime.utcnow(),
-                    status="COMPLETED",
-                    reference=invoice_number
-                )
-                db.add(payment)
+        # Démarrer une transaction
+            # Récupérer et verrouiller les produits
+            product_ids = [item.product_id for item in sale_data.items]
+            products = db.query(Product).filter(
+                Product.id.in_(product_ids)
+            ).with_for_update().all()
             
-            # Récupérer les détails de la vente créée
+            if len(products) != len(product_ids):
+                found_ids = [p.id for p in products]
+                missing = set(product_ids) - set(found_ids)
+                raise NotFoundException("Produit", list(missing)[0])
+            
+            products_map = {p.id: p for p in products}
+            
+            # Validation et calculs - utiliser des entiers
+            items_data = []
+            total_amount = 0
+            total_cost = 0
+            total_profit = 0
+            total_tax = sale_data.tax_amount or 0
+            total_shipping = sale_data.shipping_cost or 0
+            
+            for item in sale_data.items:
+                product = products_map[item.product_id]
+                
+                # Vérifier le stock
+                current_stock = product_crud.calculate_current_stock(db, product.id)
+                if current_stock < item.quantity:
+                    raise InsufficientStockException(
+                        product.name, current_stock, item.quantity
+                    )
+                
+                # Convertir les Decimal en int
+                unit_price = int(item.unit_price) if item.unit_price is not None else int(product.selling_price)
+                purchase_price = int(product.purchase_price)
+                line_discount = item.discount or 0
+                
+                # Calculs de la ligne en entiers
+                line_total = (unit_price * item.quantity) - line_discount
+                line_cost = purchase_price * item.quantity
+                line_profit = line_total - line_cost - line_discount
+                
+                items_data.append({
+                    "product": product,
+                    "quantity": item.quantity,
+                    "unit_price": unit_price,
+                    "purchase_price": purchase_price,
+                    "line_discount": line_discount,
+                    "line_total": line_total,
+                    "line_cost": line_cost,
+                    "line_profit": line_profit
+                })
+                
+                total_amount += line_total
+                total_cost += line_cost
+                total_profit += line_profit
+            
+            # Appliquer la remise globale
+            discount = sale_data.discount or 0
+            if discount > total_amount:
+                raise BusinessLogicException("La remise ne peut pas dépasser le montant total")
+            
+            final_amount = total_amount - discount + total_tax + total_shipping
+            
+            # Vérifier le client
+            client = None
+            if sale_data.client_id:
+                client = db.query(Client).filter(Client.id == sale_data.client_id).first()
+                if not client:
+                    raise NotFoundException("Client", sale_data.client_id)
+            
+            # Créer la vente - tous les champs en entiers
+            invoice_number = SaleRefundService.generate_invoice_number()
+            db_sale = Sale(
+                client_id=sale_data.client_id,
+                invoice_number=invoice_number,
+                total_amount=total_amount,
+                discount=discount,
+                tax_amount=total_tax,
+                shipping_cost=total_shipping,
+                final_amount=final_amount,
+                payment_method=sale_data.payment_method,
+                payment_status="PAID",
+                total_profit=total_profit,
+                total_cost=total_cost,
+                notes=sale_data.notes,
+                sale_date=datetime.utcnow(),
+                cashier_id=user_id
+            )
+            
+            db.add(db_sale)
+            db.flush()
+            
+            # Créer les lignes de vente
+            for item_data in items_data:
+                sale_item = SaleItem(
+                    sale_id=db_sale.id,
+                    product_id=item_data["product"].id,
+                    quantity=item_data["quantity"],
+                    unit_price=item_data["unit_price"],
+                    purchase_price=item_data["purchase_price"],
+                    discount=item_data["line_discount"],
+                    total_price=item_data["line_total"],
+                    cost=item_data["line_cost"],
+                    profit=item_data["line_profit"]
+                )
+                db.add(sale_item)
+                
+                # Mouvement de stock
+                movement = StockMovement(
+                    product_id=item_data["product"].id,
+                    movement_type="OUT",
+                    quantity=item_data["quantity"],
+                    unit_cost=item_data["purchase_price"],
+                    total_cost=item_data["line_cost"],
+                    reason="VENTE",
+                    reference=invoice_number,
+                    movement_date=datetime.utcnow()
+                )
+                db.add(movement)
+            
+            # Mettre à jour le client
+            if client:
+                # Convertir le Decimal en int
+                client_total = int(client.total_purchases) if client.total_purchases else 0
+                client.total_purchases = client_total + final_amount
+                client.last_purchase = datetime.utcnow()
+                
+                # Points de fidélité (1 point par 1000 FCFA)
+                points_to_add = final_amount // 1000
+                client.loyalty_points = (client.loyalty_points or 0) + points_to_add
+                
+                # Mise à jour du type de client
+                if client.total_purchases > 1000000:
+                    client.client_type = "VIP"
+                elif client.total_purchases > 500000:
+                    client.client_type = "FIDELITE"
+            
+            # Créer le paiement
+            payment = Payment(
+                sale_id=db_sale.id,
+                amount=final_amount,
+                payment_method=sale_data.payment_method,
+                payment_date=datetime.utcnow(),
+                status="COMPLETED",
+                reference=invoice_number
+            )
+            db.add(payment)
+            db.commit()
+            db.refresh(db_sale)
+        # Récupérer les détails de la vente créée
             return SaleRefundService.get_sale_details(db, db_sale.id)
                 
         except Exception as e:
+            db.rollback()  # 🔥 TRÈS IMPORTANT
             logger.error(f"Erreur création vente: {str(e)}")
             raise BusinessLogicException(f"Erreur lors de la création de la vente: {str(e)}")
         
@@ -349,101 +350,100 @@ class SaleRefundService:
         )
         
         try:
-            with db.begin():
-                # Créer le remboursement
-                refund_number = SaleRefundService.generate_refund_number()
-                is_partial = float(refund_data.refund_amount) < float(sale.final_amount)
+            # Créer le remboursement
+            refund_number = SaleRefundService.generate_refund_number()
+            is_partial = float(refund_data.refund_amount) < float(sale.final_amount)
+            
+            refund = Refund(
+                sale_id=sale_id,
+                refund_number=refund_number,
+                refund_amount=refund_data.refund_amount,
+                refund_reason=refund_data.refund_reason.value,
+                refund_method=refund_data.refund_method.value,
+                refund_status="PENDING",
+                is_partial=is_partial,
+                notes=refund_data.notes,
+                approved_by=user_id if user_id else None
+            )
+            
+            db.add(refund)
+            db.flush()
+            
+            # Traiter les articles remboursés
+            total_refund_calc = 0.0
+            for item in refund_data.items:
+                sale_item = db.query(SaleItem).filter(SaleItem.id == item.sale_item_id).first()
+                if not sale_item:
+                    raise NotFoundException("Article de vente", item.sale_item_id)
                 
-                refund = Refund(
-                    sale_id=sale_id,
-                    refund_number=refund_number,
-                    refund_amount=refund_data.refund_amount,
-                    refund_reason=refund_data.refund_reason.value,
-                    refund_method=refund_data.refund_method.value,
-                    refund_status="PENDING",
-                    is_partial=is_partial,
-                    notes=refund_data.notes,
-                    approved_by=user_id if user_id else None
+                # Vérifier la quantité
+                if item.quantity > sale_item.quantity:
+                    raise BusinessLogicException(
+                        f"Quantité invalide pour l'article {sale_item.product.name}"
+                    )
+                
+                refund_item = RefundItem(
+                    refund_id=refund.id,
+                    sale_item_id=item.sale_item_id,
+                    product_id=sale_item.product_id,
+                    quantity=item.quantity,
+                    refund_price=item.refund_price,
+                    reason=item.reason,
+                    restocked=item.restocked
                 )
                 
-                db.add(refund)
-                db.flush()
+                db.add(refund_item)
+                total_refund_calc += float(item.refund_price) * item.quantity
                 
-                # Traiter les articles remboursés
-                total_refund_calc = 0.0
-                for item in refund_data.items:
-                    sale_item = db.query(SaleItem).filter(SaleItem.id == item.sale_item_id).first()
-                    if not sale_item:
-                        raise NotFoundException("Article de vente", item.sale_item_id)
-                    
-                    # Vérifier la quantité
-                    if item.quantity > sale_item.quantity:
-                        raise BusinessLogicException(
-                            f"Quantité invalide pour l'article {sale_item.product.name}"
+                # Retour en stock si demandé
+                if item.restocked:
+                    product = db.query(Product).filter(Product.id == sale_item.product_id).first()
+                    if product:
+                        movement = StockMovement(
+                            product_id=product.id,
+                            movement_type="IN",
+                            quantity=item.quantity,
+                            unit_cost=float(sale_item.purchase_price),
+                            total_cost=float(sale_item.purchase_price) * item.quantity,
+                            reason="RETOUR_CLIENT",
+                            reference=refund_number,
+                            movement_date=datetime.utcnow(),
+                            notes=f"Remboursement: {refund_number}"
                         )
-                    
-                    refund_item = RefundItem(
-                        refund_id=refund.id,
-                        sale_item_id=item.sale_item_id,
-                        product_id=sale_item.product_id,
-                        quantity=item.quantity,
-                        refund_price=item.refund_price,
-                        reason=item.reason,
-                        restocked=item.restocked
+                        db.add(movement)
+            
+            # Vérifier la correspondance des montants
+            if abs(float(refund_data.refund_amount) - total_refund_calc) > 0.01:
+                raise BusinessLogicException(
+                    f"Montant calculé ({total_refund_calc:.2f} €) ≠ montant déclaré ({refund_data.refund_amount} €)"
+                )
+            
+            # Mettre à jour la vente
+            total_refunded = db.query(func.coalesce(func.sum(Refund.refund_amount), 0)).filter(
+                Refund.sale_id == sale_id,
+                Refund.refund_status.in_(["APPROVED", "COMPLETED"])
+            ).scalar()
+            
+            sale.refunded_amount = total_refunded + float(refund_data.refund_amount)
+            
+            # Si remboursement total, marquer comme non remboursable
+            if not is_partial:
+                sale.is_refundable = False
+            
+            # Ajuster les points de fidélité
+            if sale.client_id:
+                client = db.query(Client).filter(Client.id == sale.client_id).first()
+                if client and client.loyalty_points > 0:
+                    points_to_remove = int(
+                        (float(refund_data.refund_amount) / float(sale.final_amount)) * 
+                        (sale.final_amount // 1000)
                     )
-                    
-                    db.add(refund_item)
-                    total_refund_calc += float(item.refund_price) * item.quantity
-                    
-                    # Retour en stock si demandé
-                    if item.restocked:
-                        product = db.query(Product).filter(Product.id == sale_item.product_id).first()
-                        if product:
-                            movement = StockMovement(
-                                product_id=product.id,
-                                movement_type="IN",
-                                quantity=item.quantity,
-                                unit_cost=float(sale_item.purchase_price),
-                                total_cost=float(sale_item.purchase_price) * item.quantity,
-                                reason="RETOUR_CLIENT",
-                                reference=refund_number,
-                                movement_date=datetime.utcnow(),
-                                notes=f"Remboursement: {refund_number}"
-                            )
-                            db.add(movement)
-                
-                # Vérifier la correspondance des montants
-                if abs(float(refund_data.refund_amount) - total_refund_calc) > 0.01:
-                    raise BusinessLogicException(
-                        f"Montant calculé ({total_refund_calc:.2f} €) ≠ montant déclaré ({refund_data.refund_amount} €)"
-                    )
-                
-                # Mettre à jour la vente
-                total_refunded = db.query(func.coalesce(func.sum(Refund.refund_amount), 0)).filter(
-                    Refund.sale_id == sale_id,
-                    Refund.refund_status.in_(["APPROVED", "COMPLETED"])
-                ).scalar()
-                
-                sale.refunded_amount = total_refunded + float(refund_data.refund_amount)
-                
-                # Si remboursement total, marquer comme non remboursable
-                if not is_partial:
-                    sale.is_refundable = False
-                
-                # Ajuster les points de fidélité
-                if sale.client_id:
-                    client = db.query(Client).filter(Client.id == sale.client_id).first()
-                    if client and client.loyalty_points > 0:
-                        points_to_remove = int(
-                            (float(refund_data.refund_amount) / float(sale.final_amount)) * 
-                            (sale.final_amount // 1000)
-                        )
-                        client.loyalty_points = max(0, client.loyalty_points - points_to_remove)
-                
-                db.commit()
-                
-                return SaleRefundService.get_refund_details(db, refund.id)
-                
+                    client.loyalty_points = max(0, client.loyalty_points - points_to_remove)
+            
+            db.commit()
+            
+            return SaleRefundService.get_refund_details(db, refund.id)
+            
         except Exception as e:
             db.rollback()
             logger.error(f"Erreur création remboursement: {str(e)}")

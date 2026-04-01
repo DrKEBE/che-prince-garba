@@ -60,10 +60,10 @@ export const AuthProvider = ({ children }) => {
       console.log('[DEV] Login attempt:', username);
       
       const devUsers = {
-        'admin': { id: 1, username: 'admin', role: 'admin', full_name: 'Administrateur' },
-        'manager': { id: 2, username: 'manager', role: 'manager', full_name: 'Manager' },
-        'cashier': { id: 3, username: 'cashier', role: 'cashier', full_name: 'Caissier' },
-        'user': { id: 4, username: 'user', role: 'user', full_name: 'Utilisateur' }
+        'admin': { id: 1, username: 'admin', role: 'ADMIN', full_name: 'Administrateur' },
+        'manager': { id: 2, username: 'manager', role: 'MANAGER', full_name: 'Manager' },
+        'cashier': { id: 3, username: 'cashier', role: 'CASHIER', full_name: 'Caissier' },
+        'user': { id: 4, username: 'user', role: 'USER', full_name: 'Utilisateur' }
       };
       
       const userData = devUsers[username] || devUsers['admin'];
@@ -122,8 +122,9 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateUser,
     isAuthenticated: !!user,
-    isAdmin: user?.role === 'admin',
-    isManager: user?.role === 'manager' || user?.role === 'admin',
+    isAdmin: user?.role === 'ADMIN',
+    isManager: user?.role === 'MANAGER' || user?.role === 'ADMIN',
+    isCashier: user?.role === 'CASHIER',
     clearError: () => setError(null)
   };
 

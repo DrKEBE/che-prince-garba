@@ -43,6 +43,11 @@ import { useAuth } from '../../context/AuthContext';
 import { useApp, useNotifications, useTheme as useAppTheme, useSidebar } from '../../context/AppContext';
 import { THEME_COLORS, ROLES } from '../../constants/config';
 
+import { useNavigate } from 'react-router-dom';
+import ModalForm from '../common/ModalForm';
+import ProductForm from '../products/ProductForm';
+import ClientForm from '../clients/ClientForm';
+import SaleForm from '../sales/SaleForm';
 const Navbar = () => {
   const theme = useTheme();
   const { user, logout } = useAuth();
@@ -53,6 +58,31 @@ const Navbar = () => {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [anchorElNotifications, setAnchorElNotifications] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const navigate = useNavigate();
+
+  const [openSaleModal, setOpenSaleModal] = useState(false);
+  const [openProductModal, setOpenProductModal] = useState(false);
+  const [openClientModal, setOpenClientModal] = useState(false);
+
+  const handleCloseModals = () => {
+    setOpenSaleModal(false);
+    setOpenProductModal(false);
+    setOpenClientModal(false);
+  };
+
+  const handleSaleSuccess = () => {
+    handleCloseModals();
+    // Optionnel : rafraîchir la liste des ventes si nécessaire
+  };
+
+  const handleProductSuccess = () => {
+    handleCloseModals();
+  };
+
+  const handleClientSuccess = () => {
+    handleCloseModals();
+  };
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -107,14 +137,14 @@ const Navbar = () => {
   };
 
   const quickActions = [
-    { label: 'Nouvelle vente', icon: <AddShoppingCart />, path: '/sales/new', roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CASHIER] },
-    { label: 'Nouveau produit', icon: <Add />, path: '/products/new', roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.STOCK_MANAGER] },
-    { label: 'Nouveau client', icon: <PersonAdd />, path: '/clients/new', roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CASHIER] },
+    { label: 'Nouvelle vente', icon: <AddShoppingCart />, onClick: () => setOpenSaleModal(true), roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CASHIER] },
+    { label: 'Nouveau produit', icon: <Add />, onClick: () => setOpenProductModal(true), roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.STOCK_MANAGER] },
+    { label: 'Nouveau client', icon: <PersonAdd />, onClick: () => setOpenClientModal(true), roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.CASHIER] },
   ];
 
   const userActions = [
-    { label: 'Mon profil', icon: <PersonIcon />, onClick: () => console.log('Profile') },
-    { label: 'Paramètres', icon: <SettingsIcon />, onClick: () => console.log('Settings') },
+    { label: 'Mon profil', icon: <PersonIcon />, onClick: () => navigate('/profile') },
+    { label: 'Paramètres', icon: <SettingsIcon />, onClick: () => navigate('/settings') },
     { label: mode === 'dark' ? 'Mode clair' : 'Mode sombre', icon: mode === 'dark' ? <Brightness7 /> : <Brightness4 />, onClick: toggleTheme },
     { label: 'Déconnexion', icon: <LogoutIcon />, onClick: handleLogout },
   ];
@@ -172,7 +202,7 @@ const Navbar = () => {
                     '&:hover': { bgcolor: alpha('#FFFFFF', 0.3) },
                     color: 'white',
                   }}
-                  onClick={() => console.log(`Navigate to ${action.path}`)}
+                  onClick={action.onClick}
                 >
                   {action.icon}
                 </IconButton>
@@ -370,6 +400,36 @@ const Navbar = () => {
           ))}
         </Menu>
       </Toolbar>
+            {/* Modales */}
+      <ModalForm
+        open={openSaleModal}
+        onClose={handleCloseModals}
+        title="Nouvelle vente"
+        maxWidth="lg"
+        actions={false}
+      >
+        <SaleForm onSuccess={handleSaleSuccess} onCancel={handleCloseModals} />
+      </ModalForm>
+
+      <ModalForm
+        open={openProductModal}
+        onClose={handleCloseModals}
+        title="Nouveau produit"
+        maxWidth="lg"
+        actions={false}
+      >
+        <ProductForm onSuccess={handleProductSuccess} onCancel={handleCloseModals} />
+      </ModalForm>
+
+      <ModalForm
+        open={openClientModal}
+        onClose={handleCloseModals}
+        title="Nouveau client"
+        maxWidth="md"
+        actions={false}
+      >
+        <ClientForm onSuccess={handleClientSuccess} onCancel={handleCloseModals} />
+      </ModalForm>
     </AppBar>
   );
 };
